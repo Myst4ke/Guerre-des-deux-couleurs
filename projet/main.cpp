@@ -93,29 +93,28 @@ int main(int argc, char **argv) {
       switch (event.type) {
       // Clic sur un bouton de la souris
       case SDL_MOUSEBUTTONDOWN: // gestion des clics
-        // Clic Gauche
-        if (event.button.button == SDL_BUTTON_LEFT) {
+        // Clic Molette
+        if (event.button.button == SDL_BUTTON_MIDDLE) {
           Cellule &actuelle = plat.appartient2(event.button.x, event.button.y);
 
-          cout << "Clic gauche sur la case : ";
-          actuelle.pos.affiche();
-          
-          game.left_clicked(actuelle);
+          game.finDeTour(actuelle, plat);
+          // Clic Gauche
+        } else if (event.button.button == SDL_BUTTON_LEFT) {
+          Cellule &actuelle = plat.appartient2(event.button.x, event.button.y);
 
-          // Clic droit
+          /* cout << "Clic gauche sur la case : ";
+          actuelle.pos.affiche(); */
+
+          game.left_clicked(actuelle, plat);
+
+          // Clic Droit
         } else if (event.button.button == SDL_BUTTON_RIGHT) {
           Cellule &actuelle = plat.appartient2(event.button.x, event.button.y);
 
-          cout << "Clic droit sur la case : ";
-          actuelle.pos.affiche();
+          /* cout << "Clic droit sur la case : ";
+          actuelle.pos.affiche(); */
 
           if (game.right_clicked(renderer, actuelle, plat)) {
-            /* affiche(renderer, color_red, actuelle);
-
-            cout << "La case est vide" << endl;
-            SDL_Delay(200);
-            affiche(renderer, color_white, actuelle);
- */
           } else {
 
             print_unit(renderer, actuelle);
@@ -127,25 +126,18 @@ int main(int argc, char **argv) {
             while (SDL_WaitEvent(&event)) {
               switch (event.type) {
               case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_RIGHT) {
+                if (event.button.button == SDL_BUTTON_LEFT) {
                   Cellule &prochaine =
                       plat.appartient2(event.button.x, event.button.y);
 
-                  // bouge l'unité a la case choisie
-                  /* draw_bordure(renderer, color_green, actuelle);
-                  draw_bordure(renderer, color_green, prochaine);
-                  game.moove_cell(actuelle, prochaine);
-
-                  SDL_Delay(100);
-                  affiche(renderer, color_white, actuelle);
-                  print_unit(renderer, actuelle);
-                  affiche(renderer, color_white, prochaine);
-                  print_unit(renderer, prochaine); */
+                  game.right_left_clicked(renderer, actuelle, prochaine, plat, program_launched);
+                  goto end;
+                } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                  Cellule &prochaine =
+                      plat.appartient2(event.button.x, event.button.y);
 
                   game.double_right_cliked(renderer, actuelle, prochaine, plat);
 
-                  /*  affiche_plat(renderer,  plat);
-                   affiche_contenu(renderer, plat); */
                   goto end;
                 }
                 break;
@@ -165,13 +157,13 @@ int main(int argc, char **argv) {
         SDL_BUTTON_RIGHT
         */
 
-      /* case SDL_WINDOWEVENT: //
-        if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
-          cout << "La souris est sortie de la fenêtre" << endl;
-        } else if (event.window.event == SDL_WINDOWEVENT_ENTER) {
-          cout << "La souris est dans la fenêtre" << endl;
-        }
-        break; */
+        /* case SDL_WINDOWEVENT: //
+          if (event.window.event == SDL_WINDOWEVENT_LEAVE) {
+            cout << "La souris est sortie de la fenêtre" << endl;
+          } else if (event.window.event == SDL_WINDOWEVENT_ENTER) {
+            cout << "La souris est dans la fenêtre" << endl;
+          }
+          break; */
 
       case SDL_QUIT: // Clic sur la croix de la fenêtre
         program_launched = SDL_FALSE;

@@ -9,24 +9,25 @@ using namespace std;
 
 struct Case {
 public:
-  unsigned int colone;
-  unsigned int ligne;
+  int colone;
+  int ligne;
   void affiche() { cout << "[" << ligne << "," << colone << "]" << endl; }
 };
 
 class Object {
 public:
+  int pv;
+  int attaque;
+  int nb_attaque;
   string nom;
+  bool jouee;
   string nom_classe;
   Case position;
   string image_file = "";
   bool statique;
   bool vide = true;
-  unsigned int deplacement;
+  int deplacement;
   int equipe;
-  
-
-  
 
   Object() { vide = true; }
 
@@ -55,8 +56,10 @@ public:
   Ressources() {
     nom_classe = "Ressource";
     statique = true;
+    jouee = true;
     deplacement = 0;
     vide = false;
+    equipe = -1;
   }
 };
 
@@ -88,6 +91,7 @@ public:
 };
 class Chateau : public Buildings {
 public:
+  int pv = 400;
   Chateau(int pequipe) {
     nom = "Chateau";
     statique = true;
@@ -95,6 +99,7 @@ public:
     vide = false;
     image_file = "assets/Chateau50.bmp";
     equipe = pequipe;
+    nb_attaque = 2;
   }
 };
 
@@ -123,22 +128,37 @@ public:
 
 class Units : public Object {
 public:
-  bool jouée;
+  int indice;
+
   Units() { statique = false; }
   Units(int pdeplacement) {
     nom_classe = "unité";
     statique = false;
     deplacement = pdeplacement;
     vide = false;
+    jouee = false;
   }
 };
 
 class Ouvrier : public Units {
 public:
   Ouvrier(int depl, int pequipe) : Units(depl) {
+    pv = 100;
+    attaque = 25;
     nom = "ouvrier";
     image_file = "assets/hache.bmp";
     equipe = pequipe;
+  }
+};
+class Chevalier : public Units {
+public:
+  Chevalier(int depl, int pequipe) : Units(depl) {
+    pv = 150;
+    attaque = 50;
+    nom = "chevalier";
+    image_file = "assets/épée.bmp";
+    equipe = pequipe;
+    nb_attaque =1;
   }
 };
 
@@ -147,10 +167,15 @@ public:
   int equipe;
   int bois;
   int gold;
+  int bonus_bois = 0;
+  int bonus_gold = 0;
   vector<Units> unités;
-  Joueur(int eqp, int pbois, int pgold){
+  Joueur(int eqp, int pbois, int pgold) {
     equipe = eqp;
     bois = pbois;
     gold = pgold;
+  }
+  Joueur(){
+
   }
 };

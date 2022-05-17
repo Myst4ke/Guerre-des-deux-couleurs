@@ -96,7 +96,7 @@ public:
     ligne = window_height / ptaille_cellule;
     colone = window_width / ptaille_cellule;
     cel_t = ptaille_cellule;
-    cout << "Ligne : " << ligne << ", Colone :" << colone << endl;
+    /* cout << "Ligne : " << ligne << ", Colone :" << colone << endl; */
     rempli();
   }
   Plateau();

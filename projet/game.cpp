@@ -1,6 +1,7 @@
 #include "draw.cpp"
 //
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_stdinc.h>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
@@ -16,17 +17,17 @@ using namespace std;
 
 class Game {
 public:
+  int tours = 1;
   SDL_Renderer *rend;
   int tour_joueur = 0;
-  vector<Joueur> joueurs;
+  Joueur joueurs[2];
 
-  Game(SDL_Renderer *prend/* ,
-       Plateau pplat */) {
+  Game(SDL_Renderer *prend) {
     rend = prend;
     Joueur j1(1, 100, 100);
     Joueur j2(2, 100, 100);
-    joueurs.push_back(j1);
-    joueurs.push_back(j2);
+    joueurs[0] = j1;
+    joueurs[1] = j2;
   }
 
   void distrib_ressources(Plateau &plat) {
@@ -88,10 +89,12 @@ public:
     write_result(rst, "result/pourcents.txt");
     write_result(rst2, "result/grille.txt");
   }
-  void affiche_ressources(){
-    
+  void affiche_ressources() {
+    cout << "Tour joueur :" << tour_joueur << endl;
+    cout << "Joueur " << tour_joueur + 1
+         << " Vous avez : " << joueurs[tour_joueur].bois << " bois et "
+         << joueurs[tour_joueur].gold << " or." << endl;
   }
-
 
   // Appelle toutes les fonctions néscéssaires au lancement de la partie
   void start(Plateau &plat) {
@@ -99,6 +102,13 @@ public:
     add_castle(plat);
     affiche_plat(rend, plat);
     affiche_contenu(rend, plat);
+    cout << "La partie commence !" << endl
+         << "Votre but est de détruire le chateau adverse. \nPour cela vous "
+            "pouvez produire des chevalier pour attaquer et des ouvrier pour "
+            "collecter les ressources sur la carte.\n Ouvrier(50 bois) "
+            "Chevalier(100 or)"
+         << endl
+         << "Tour n°" << tours << endl;
     affiche_ressources();
   }
 
@@ -113,21 +123,82 @@ public:
     if (cell.contenu.equipe == 1) {
       if (plat.tab[cell.indice + 1].contenu.vide ||
           plat.tab[cell.indice + 1].contenu.nom_classe == "Ressource") {
-        Ouvrier ouvrier1(2, 1);
-        plat.tab[cell.indice + 1].add_unit(ouvrier1);
-        joueurs[0].unités.push_back(ouvrier1);
-        print_unit(rend, plat.tab[cell.indice + 1]);
+        if (joueurs[0].bois >= 50) {
+          Ouvrier ouvrier1(3, 1);
+          plat.tab[cell.indice + 1].add_unit(ouvrier1);
+          joueurs[0].unités.push_back(ouvrier1);
+          print_unit(rend, plat.tab[cell.indice + 1]);
+          joueurs[0].bois -= 50;
+        } else {
+          cout << "Vous n'avez pas assez de bois pour produire un ouvrier !"
+               << endl;
+        }
+      } else {
+        cout << "L'entrée du chateau est obstruée l'unité ne peut pas sortir"
+             << endl;
       }
     } else if (cell.contenu.equipe == 2) {
       if (plat.tab[cell.indice - 1].contenu.vide ||
           plat.tab[cell.indice - 1].contenu.nom_classe == "Ressource") {
-        Ouvrier ouvrier2(2, 2);
-        plat.tab[cell.indice - 1].add_unit(ouvrier2);
-        joueurs[1].unités.push_back(ouvrier2);
-        print_unit(rend, plat.tab[cell.indice - 1]);
+        if (joueurs[1].bois >= 50) {
+          Ouvrier ouvrier2(3, 2);
+          plat.tab[cell.indice - 1].add_unit(ouvrier2);
+          joueurs[1].unités.push_back(ouvrier2);
+          print_unit(rend, plat.tab[cell.indice - 1]);
+          joueurs[1].bois -= 50;
+        } else {
+          cout << "Vous n'avez pas assez de bois pour produire un ouvrier !"
+               << endl;
+        }
+      } else {
+        cout << "L'entrée du chateau est obstruée l'unité ne peut pas sortir"
+             << endl;
       }
     }
   }
+  void produire_chevalier(SDL_Renderer *rend, Cellule cell, Plateau &plat) {
+    if (cell.contenu.equipe == 1) {
+      if (plat.tab[cell.indice + 1].contenu.vide ||
+          plat.tab[cell.indice + 1].contenu.nom_classe == "Ressource") {
+        if (joueurs[0].gold >= 100) {
+          Chevalier chevalier1(2, 1);
+          plat.tab[cell.indice + 1].add_unit(chevalier1);
+          joueurs[0].unités.push_back(chevalier1);
+          print_unit(rend, plat.tab[cell.indice + 1]);
+          joueurs[0].gold -= 100;
+        } else {
+          cout << "Vous n'avez pas assez d'o pour produire un chevalier !"
+               << endl;
+        }
+      } else {
+        cout << "L'entrée du chateau est obstruée l'unité ne peut pas sortir"
+             << endl;
+      }
+    } else if (cell.contenu.equipe == 2) {
+      if (plat.tab[cell.indice - 1].contenu.vide ||
+          plat.tab[cell.indice - 1].contenu.nom_classe == "Ressource") {
+        if (joueurs[1].gold >= 100) {
+          Chevalier chevalier2(2, 2);
+          plat.tab[cell.indice - 1].add_unit(chevalier2);
+          joueurs[1].unités.push_back(chevalier2);
+          print_unit(rend, plat.tab[cell.indice - 1]);
+          joueurs[1].gold -= 100;
+        } else {
+          cout << "Vous n'avez pas assez d'or pour produire un chevalier !"
+               << endl;
+        }
+      } else {
+        cout << "L'entrée du chateau est obstruée l'unité ne peut pas sortir"
+             << endl;
+      }
+    }
+  }
+  /*
+
+
+
+
+  */
   bool right_clicked(SDL_Renderer *rend, Cellule &cell, Plateau &plat) {
     if (cell.contenu.vide) {
       affiche(rend, color_red, cell);
@@ -135,8 +206,23 @@ public:
       SDL_Delay(100);
       affiche(rend, color_white, cell);
       return true;
-    } else if (cell.contenu.nom == "Chateau") {
-      produire_ouvrier(rend, cell, plat);
+    } else if (cell.contenu.equipe == tour_joueur + 1) {
+      if (cell.contenu.nom == "Chateau") {
+        produire_ouvrier(rend, cell, plat);
+        affiche_ressources();
+        return true;
+      } else {
+        /* affiche_deplacement(cell.contenu, plat, rend, color_orange); */
+        print_unit(rend, cell);
+        draw_bordure(rend, color_green, cell);
+        return false;
+      }
+    } else if (cell.contenu.equipe == tour_joueur + 2 ||
+               cell.contenu.equipe == tour_joueur) {
+      affiche(rend, color_red, cell);
+      cout << "Cette unité n'appartient pas a votre équipe" << endl;
+      SDL_Delay(100);
+      print_unit(rend, cell);
       return true;
     } else if (cell.contenu.statique) {
       affiche(rend, color_red, cell);
@@ -144,61 +230,151 @@ public:
       SDL_Delay(100);
       print_unit(rend, cell);
       return true;
-    } else {
-      /* affiche_deplacement(cell.contenu, plat, rend, color_orange); */
-      print_unit(rend, cell);
-      draw_bordure(rend, color_green, cell);
-      return false;
     }
+    return true;
   }
+  /*
 
+
+
+
+  */
   void double_right_cliked(SDL_Renderer *rend, Cellule &depart, Cellule &arrive,
                            Plateau &plat) {
+    cout << "double_right_cliked" << endl;
     if (depart.contenu.statique) {
       cout << "Cet objet est statique il ne peut bouger" << endl;
       affiche(rend, color_red, depart);
       SDL_Delay(200);
       print_unit(rend, depart);
-    } else if (depart.contenu.nom == "ouvrier" &&
-               arrive.contenu.nom == "arbre") {
-      // l'ouvrier commence à exploiter le bois on remplace donc le bois par un
-      // ouvrier statique qui génère du bois passivement
-      depart.transfert(arrive);
-      print_unit(rend, arrive);
-      affiche(rend, color_white, depart);
-      arrive.contenu.statique = true;
-    } else if (depart.contenu.nom == "ouvrier" &&
-               arrive.contenu.nom == "rocher") {
-      depart.clear_contenu();
-      arrive.clear_contenu();
-      Mine mine(1);
-      arrive.add_unit(mine);
-      print_unit(rend, arrive);
-      affiche(rend, color_white, depart);
-    } else if (!arrive.contenu.vide) {
-      cout << "Il y a déjà un objet à l'arrivée !" << endl;
-      affiche(rend, color_red, depart);
-      affiche(rend, color_red, arrive);
-      SDL_Delay(200);
+      // check de l'équipe
+    } else if (depart.contenu.jouee == false) {
+      if (depart.contenu.nom == "ouvrier" && arrive.contenu.nom == "arbre") {
+        // l'ouvrier commence à exploiter le bois on remplace donc le bois par
+        // un ouvrier statique qui génère du bois passivement
+        depart.clear_contenu();
+        arrive.clear_contenu();
+        Scierie scierie(tour_joueur + 1);
+        arrive.add_unit(scierie);
+        print_unit(rend, arrive);
+        affiche(rend, color_white, depart);
+        joueurs[tour_joueur].bonus_bois += 25;
+      } else if (depart.contenu.nom == "ouvrier" &&
+                 arrive.contenu.nom == "rocher") {
+        depart.clear_contenu();
+        arrive.clear_contenu();
+        Mine mine(tour_joueur + 1);
+        arrive.add_unit(mine);
+        print_unit(rend, arrive);
+        affiche(rend, color_white, depart);
+        joueurs[tour_joueur].bonus_gold += 50;
+
+      } else if (!arrive.contenu.vide) {
+        cout << "Il y a déjà un objet à l'arrivée !" << endl;
+        affiche(rend, color_red, depart);
+        affiche(rend, color_red, arrive);
+        SDL_Delay(200);
+        print_unit(rend, depart);
+        print_unit(rend, arrive);
+      } else if (arrive.contenu.vide) {
+        depart.contenu.jouee = true;
+        moove_cell(depart, arrive);
+        
+        
+      }
+    } else {
+      cout << "Cette unité a déjà été déplacée pendant ce tour !" << endl;
       print_unit(rend, depart);
-      print_unit(rend, arrive);
-    } else if (arrive.contenu.vide) {
-      moove_cell(depart, arrive);
     }
   }
 
-  void left_clicked(Cellule cell) {
-    affiche(rend, color_green, cell);
-    SDL_Delay(100);
-    affiche(rend, color_white, cell);
-    print_unit(rend, cell);
-    // liste des action dans le terminal
+  void left_clicked(Cellule cell, Plateau &plat) {
+    if (cell.contenu.equipe == tour_joueur + 1) {
+      if (cell.contenu.nom == "Chateau") {
+        produire_chevalier(rend, cell, plat);
+        affiche_ressources();
+      } else {
+        affiche(rend, color_red, cell);
+        SDL_Delay(100);
+        affiche(rend, color_white, cell);
+        print_unit(rend, cell);
+      }
+    } else if (cell.contenu.equipe == tour_joueur + 2 ||
+               cell.contenu.equipe == tour_joueur) {
+      affiche(rend, color_red, cell);
+      cout << "Cette unité n'appartient pas a votre équipe" << endl;
+      SDL_Delay(100);
+      print_unit(rend, cell);
+    } else {
+      affiche(rend, color_green, cell);
+      SDL_Delay(100);
+      affiche(rend, color_white, cell);
+      print_unit(rend, cell);
+    }
+  }
+  void right_left_clicked(SDL_Renderer *rend, Cellule &depart, Cellule &arrive,
+                          Plateau &plat, SDL_bool &launched) {
+    if (depart.pos.colone - 1 <= arrive.pos.colone &&
+        depart.pos.colone + 1 >= arrive.pos.colone &&
+        depart.pos.ligne - 1 <= arrive.pos.ligne &&
+        depart.pos.ligne + 1 >= arrive.pos.ligne) {
+      if (depart.contenu.nom == "chevalier" ||
+          depart.contenu.nom == "Chateau") {
+        if (depart.contenu.equipe == tour_joueur + 1) {
+          if ((arrive.contenu.nom == "ouvrier" ||
+               arrive.contenu.nom == "chevalier" ||
+               arrive.contenu.nom == "Chateau") &&
+              arrive.contenu.equipe != tour_joueur + 1) {
+            if (depart.contenu.nb_attaque > 0) {
+              arrive.contenu.pv -= depart.contenu.attaque;
+              depart.contenu.nb_attaque--;
+              print_unit(rend, depart);
+              if (arrive.contenu.pv <= 0) {
+                if (arrive.contenu.nom == "Chateau") {
+                  cout << "Le chateau est tombé !" << endl
+                       << "Le joueur " << tour_joueur + 1
+                       << " gagne la partie !" << endl;
+                  arrive.clear_contenu();
+                  affiche(rend, color_red, arrive);
+                  SDL_Delay(200);
+                  affiche(rend, color_white, arrive);
+                  launched = SDL_FALSE;
+                } else {
+                  cout << "L'unité :" << arrive.contenu.nom << "est morte"
+                       << endl;
+                  arrive.clear_contenu();
+                  affiche(rend, color_red, arrive);
+                  SDL_Delay(200);
+                  affiche(rend, color_white, arrive);
+                }
+              }
+
+            } else {
+              cout << "Cette unité ne peut plus attaquer !" << endl;
+              affiche(rend, color_red, arrive);
+              SDL_Delay(100);
+              print_unit(rend, arrive);
+            }
+          }
+
+        } else {
+          cout << "Cette unité n'appartient pas a votre équipe" << endl;
+          affiche(rend, color_red, arrive);
+          SDL_Delay(100);
+          affiche(rend, color_white, arrive);
+          print_unit(rend, arrive);
+        }
+      } else {
+        affiche(rend, color_red, depart);
+        SDL_Delay(100);
+        print_unit(rend, depart);
+      }
+    } else {
+      cout << "Cette cible est trop loin pour être attaquée !" << endl;
+    }
   }
 
-  void moove_cell(Cellule &depart, Cellule &arrive) {
-    cout << "1 : " << depart.pos.colone << endl;
-    cout << "2 : " << depart.contenu.deplacement << endl;
-    cout << "3 : " << arrive.pos.colone << endl;
+  bool moove_cell(Cellule &depart, Cellule &arrive) {
     if (depart.pos.colone - depart.contenu.deplacement <= arrive.pos.colone &&
         depart.pos.colone + depart.contenu.deplacement >= arrive.pos.colone &&
         depart.pos.ligne - depart.contenu.deplacement <= arrive.pos.ligne &&
@@ -206,6 +382,7 @@ public:
       depart.transfert(arrive);
       print_unit(rend, arrive);
       affiche(rend, color_white, depart);
+      return true;
     } else {
       affiche(rend, color_red, depart);
       SDL_Delay(100);
@@ -213,26 +390,40 @@ public:
       print_unit(rend, depart);
       cout << "Ce mouvement est impossible ! L'objet séléctioné n'a que "
            << depart.contenu.deplacement << " de point de déplacement" << endl;
+      return false;
     }
   }
 
-  void finDeTour() {
-    for (int i = 0; i < joueurs[tour_joueur].unités.size(); i++) {
-      int cmpt = 0;
-      if (joueurs[tour_joueur].unités[i].jouée == true) {
-        cmpt++;
-        if (cmpt == joueurs[tour_joueur].unités.size() - 1) {
-          cout << "Fin du tour du joueur " << tour_joueur + 1
-               << ". Toutes ses unités ont été déplacées."<<endl;
-          if(tour_joueur == 0){
-            tour_joueur++;
-          }else if(tour_joueur == 1){
-            tour_joueur--;
+  void finDeTour(Cellule &cell, Plateau &plat) {
+    if (cell.contenu.nom == "Chateau") {
+      cout << "Fin du tour du joueur " << tour_joueur + 1 << endl;
+      if (tour_joueur == 0) {
+        tour_joueur++;
+        tours++;
+      } else if (tour_joueur == 1) {
+        tour_joueur--;
+        tours++;
+      }
+      // On remet toutes les unités du prochain joueur au status "déplaçable"
+      for (int i = 0; i < plat.tab.size(); i++) {
+        if (plat.tab[i].contenu.equipe == tour_joueur + 1 &&
+            plat.tab[i].contenu.jouee == true) {
+          plat.tab[i].contenu.jouee = false;
+          if(plat.tab[i].contenu.nom == "chevalier"){
+            plat.tab[i].contenu.nb_attaque++;
           }
         }
       }
+      joueurs[tour_joueur].bois += joueurs[tour_joueur].bonus_bois;
+      joueurs[tour_joueur].gold += joueurs[tour_joueur].bonus_gold;
+      cout << endl
+           << "Tour n°" << tours << endl
+           << "Joueur " << tour_joueur + 1 << ". Votre tour commence !" << endl;
+      affiche_ressources();
+    } else {
+      cout << "help : Vous devez double cliquer sur le chateau pour terminer "
+              "votre tour."
+           << endl;
     }
   }
-
-  void compteur_tours() {}
 };
