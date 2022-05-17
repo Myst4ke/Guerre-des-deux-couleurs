@@ -17,9 +17,7 @@ pouvez produire des <b>chevaliers</b> pour attaquer et des <b>ouvriers</b> pour 
 - <b>main.cpp :</b> Fichier contenant toute la mise en place de la <b>SDL2</b> ainsi que <b>la boucle des évènements</b> relatif à la fenêtre de jeu.<br>
 
 <h1><u>__Comment compiler :__</u></h1>
-- <b>Installer la SDL2 (Linux) :</b>```
- apt-get install libsdl2-dev
-```<br>
+- <b>Installer la SDL2 (Linux) :</b>```apt-get install libsdl2-dev```<br>
 - <b>Installer la SDL2-Image (Linux) :</b> ```apt-get install libsdl2-image-dev```<br>
 - <b>Compiler (Linux) :</b> ```g++ main.cpp $(sdl2-config --cflags --libs) && ./a.out```<br>
 
