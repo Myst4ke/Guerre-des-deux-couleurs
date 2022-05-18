@@ -1,11 +1,11 @@
 <h2><b>Battaille des deux Couleurs</b></h2>
 
 <h1><u><b>But du jeu :</b></u></h1>
-- <b>Votre but</b> est de détruire le chateau adverse. Pour cela vous
+- <b>Votre but</b> est de détruire le château adverse. Pour cela vous
 pouvez produire des <b>chevaliers</b> pour attaquer et des <b>ouvriers</b> pour collecter les ressources sur la carte.<br>
 - Les Joueurs ont <b>deux ressources</b> différentes à leur disposition. <b>L'or et le bois</b>.<br>
-- Les <b>ouvriers</b> peuvent se déplacer sur les cases <b>pierre</b> et <b>bois</b> pour les transformer en <b>Mines</b> et en <b>Scierie</b> afin de les exploiter et obtenir des ressources à tout les tours.<br>
--Les <b>chevaliers</b> et les <b>ouvriers</b> coutent des ressources 50 bois pour les ouvriers et 100 d'or pour les chevalier.<br>
+- Les <b>ouvriers</b> peuvent se déplacer sur les cases <b>pierre</b> et <b>bois</b> pour les transformer en <b>Mines</b> et en <b>Scierie</b> afin de les exploiter et obtenir des ressources à tous les tours.<br>
+-Les <b>chevaliers</b> et les <b>ouvriers</b> coûtent des ressources 50 bois pour les ouvriers et 100 d'or pour les chevalier.<br>
 
 <h1><u>__Structure :__</u></h1>
 - <b>Le projet</b> est scindé en 6 fichier dans l'ordre suivant ```SDL++.cpp > object.cpp > struct.cpp > draw.cpp > game.cpp > main.cpp```<br>
