@@ -21,7 +21,7 @@ pouvez produire des <b>chevaliers</b> pour attaquer et des <b>ouvriers</b> pour 
 - <b>Installer la SDL2-Image (Linux) :</b> ```apt-get install libsdl2-image-dev```<br>
 - <b>Compiler (Linux) :</b> ```g++ main.cpp $(sdl2-config --cflags --libs) && ./a.out```<br>
 
-<h1><u><b>Les contôles :</b></u></h1>
+<h1><u><b>Les contrôles :</b></u></h1>
 - <b>Clic gauche :</b> Permet de produire un chevalier quand il est effectué sur le chateau<br>
 - <b>Clic droit :</b> Permet de produire un ouvrier quand il est effectué sur le chateau. Permet de déplacer les unités sur les cases ressources et les cases vides. Permet d'attaquer les autre unités lorsque qu'il est effectué depuis un chevalier vers une autre unité<br>
 - <b>Clic mollette :</b> Permet de passer son tour quand il est effectué sur le chateau<br>
