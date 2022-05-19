@@ -18,7 +18,6 @@ class Object {
 public:
   int pv;
   int attaque;
-  int nb_attaque;
   string nom;
   bool jouee;
   string nom_classe;
@@ -91,7 +90,6 @@ public:
 };
 class Chateau : public Buildings {
 public:
-  int pv = 400;
   Chateau(int pequipe) {
     nom = "Chateau";
     statique = true;
@@ -99,7 +97,7 @@ public:
     vide = false;
     image_file = "assets/Chateau50.bmp";
     equipe = pequipe;
-    nb_attaque = 2;
+    pv = 400;
   }
 };
 
@@ -158,7 +156,6 @@ public:
     nom = "chevalier";
     image_file = "assets/épée.bmp";
     equipe = pequipe;
-    nb_attaque =1;
   }
 };
 

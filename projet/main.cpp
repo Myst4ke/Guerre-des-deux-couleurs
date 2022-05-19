@@ -126,17 +126,12 @@ int main(int argc, char **argv) {
             while (SDL_WaitEvent(&event)) {
               switch (event.type) {
               case SDL_MOUSEBUTTONDOWN:
-                if (event.button.button == SDL_BUTTON_LEFT) {
+                if (event.button.button == SDL_BUTTON_RIGHT) {
                   Cellule &prochaine =
                       plat.appartient2(event.button.x, event.button.y);
 
-                  game.right_left_clicked(renderer, actuelle, prochaine, plat, program_launched);
-                  goto end;
-                } else if (event.button.button == SDL_BUTTON_RIGHT) {
-                  Cellule &prochaine =
-                      plat.appartient2(event.button.x, event.button.y);
-
-                  game.double_right_cliked(renderer, actuelle, prochaine, plat);
+                  game.double_right_cliked(renderer, actuelle, prochaine, plat,
+                                           program_launched);
 
                   goto end;
                 }

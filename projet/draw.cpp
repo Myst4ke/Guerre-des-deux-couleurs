@@ -28,8 +28,6 @@ Affichage Cellule
 
 // Affichage d'une Cellule
 void affiche(SDL_Renderer *rend, Color &color, Cellule cell) {
-  /* cout << "dessin de la cellule : (" << cell.cellule.x << "," << cell.cellule.y
-       << ")" << endl; */
   // Dessin de la cellule
   if (SDL_SetRenderDrawColor(rend, color.r, color.g, color.b,
                              SDL_ALPHA_OPAQUE) != 0) {

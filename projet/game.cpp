@@ -51,7 +51,7 @@ public:
       for (int i = 0; i < plat.colone; i++) {
         /* cout << "i : " << i << endl; */
 
-        int rd = rand() % 99; // 100% de chance
+        int rd = rand() % 100; // 100% de chance
 
         // Distance de la case au centre
         Cellule act = plat.tab[i + j * plat.colone];
@@ -90,8 +90,8 @@ public:
     write_result(rst2, "result/grille.txt");
   }
   void affiche_ressources() {
-    cout << "Tour joueur :" << tour_joueur << endl;
-    cout << "Joueur " << tour_joueur + 1
+    cout << endl
+         << "Joueur " << tour_joueur + 1
          << " Vous avez : " << joueurs[tour_joueur].bois << " bois et "
          << joueurs[tour_joueur].gold << " or." << endl;
   }
@@ -119,6 +119,7 @@ public:
     plat.tab[y * plat.colone].add_unit(j1);
     plat.tab[y * plat.colone + plat.colone - 1].add_unit(j2);
   }
+  // Ajoute un Ouvrier devant le chateau
   void produire_ouvrier(SDL_Renderer *rend, Cellule cell, Plateau &plat) {
     if (cell.contenu.equipe == 1) {
       if (plat.tab[cell.indice + 1].contenu.vide ||
@@ -156,6 +157,7 @@ public:
       }
     }
   }
+  // Ajoute un Chevalier devant le chateau
   void produire_chevalier(SDL_Renderer *rend, Cellule cell, Plateau &plat) {
     if (cell.contenu.equipe == 1) {
       if (plat.tab[cell.indice + 1].contenu.vide ||
@@ -240,8 +242,7 @@ public:
 
   */
   void double_right_cliked(SDL_Renderer *rend, Cellule &depart, Cellule &arrive,
-                           Plateau &plat) {
-    cout << "double_right_cliked" << endl;
+                           Plateau &plat, SDL_bool &launched) {
     if (depart.contenu.statique) {
       cout << "Cet objet est statique il ne peut bouger" << endl;
       affiche(rend, color_red, depart);
@@ -268,7 +269,48 @@ public:
         print_unit(rend, arrive);
         affiche(rend, color_white, depart);
         joueurs[tour_joueur].bonus_gold += 50;
-
+      } else if (depart.contenu.nom == "chevalier" &&
+                 (arrive.contenu.nom == "chevalier" ||
+                  arrive.contenu.nom == "Chateau" ||
+                  arrive.contenu.nom == "ouvrier")) {
+        // On vérifie que le chevalier est a distance d'attaque
+        if (depart.pos.colone - 1 <= arrive.pos.colone &&
+            depart.pos.colone + 1 >= arrive.pos.colone &&
+            depart.pos.ligne - 1 <= arrive.pos.ligne &&
+            depart.pos.ligne + 1 >= arrive.pos.ligne) {
+          arrive.contenu.pv -= depart.contenu.attaque;
+          affiche(rend, color_red, arrive);
+          SDL_Delay(200);
+          print_unit(rend, arrive);
+          print_unit(rend, depart);
+          depart.contenu.jouee = true;
+          if (arrive.contenu.pv <= 0) {
+            if (arrive.contenu.nom == "Chateau") {
+              cout << "Le chateau est tombé !" << endl
+                   << "Le joueur " << tour_joueur + 1 << " gagne la partie !"
+                   << endl;
+              arrive.clear_contenu();
+              affiche(rend, color_red, arrive);
+              SDL_Delay(200);
+              affiche(rend, color_white, arrive);
+              launched = SDL_FALSE;
+            } else {
+              cout << "Lunité est morte !" << endl;
+              arrive.clear_contenu();
+              affiche(rend, color_red, arrive);
+              SDL_Delay(200);
+              affiche(rend, color_white, arrive);
+            }
+          }
+        } else {
+          cout << endl
+               << "Vous êtes trop loin pour attaquer cette unité ! Rapprochez "
+                  "vous d'abord !"
+               << endl;
+          affiche(rend, color_red, depart);
+          SDL_Delay(100);
+          print_unit(rend, depart);
+        }
       } else if (!arrive.contenu.vide) {
         cout << "Il y a déjà un objet à l'arrivée !" << endl;
         affiche(rend, color_red, depart);
@@ -276,11 +318,15 @@ public:
         SDL_Delay(200);
         print_unit(rend, depart);
         print_unit(rend, arrive);
+        // Déplacement si la case est vide
       } else if (arrive.contenu.vide) {
-        depart.contenu.jouee = true;
-        moove_cell(depart, arrive);
-        
-        
+        if (moove_cell(depart, arrive)) {
+          // Si le déplacement est réussi on change le status de l'unité
+          // qui est désormais sur la case d'arrivée
+          arrive.contenu.jouee = true;
+        } else {
+          depart.contenu.jouee = false;
+        }
       }
     } else {
       cout << "Cette unité a déjà été déplacée pendant ce tour !" << endl;
@@ -312,69 +358,9 @@ public:
       print_unit(rend, cell);
     }
   }
-  void right_left_clicked(SDL_Renderer *rend, Cellule &depart, Cellule &arrive,
-                          Plateau &plat, SDL_bool &launched) {
-    if (depart.pos.colone - 1 <= arrive.pos.colone &&
-        depart.pos.colone + 1 >= arrive.pos.colone &&
-        depart.pos.ligne - 1 <= arrive.pos.ligne &&
-        depart.pos.ligne + 1 >= arrive.pos.ligne) {
-      if (depart.contenu.nom == "chevalier" ||
-          depart.contenu.nom == "Chateau") {
-        if (depart.contenu.equipe == tour_joueur + 1) {
-          if ((arrive.contenu.nom == "ouvrier" ||
-               arrive.contenu.nom == "chevalier" ||
-               arrive.contenu.nom == "Chateau") &&
-              arrive.contenu.equipe != tour_joueur + 1) {
-            if (depart.contenu.nb_attaque > 0) {
-              arrive.contenu.pv -= depart.contenu.attaque;
-              depart.contenu.nb_attaque--;
-              print_unit(rend, depart);
-              if (arrive.contenu.pv <= 0) {
-                if (arrive.contenu.nom == "Chateau") {
-                  cout << "Le chateau est tombé !" << endl
-                       << "Le joueur " << tour_joueur + 1
-                       << " gagne la partie !" << endl;
-                  arrive.clear_contenu();
-                  affiche(rend, color_red, arrive);
-                  SDL_Delay(200);
-                  affiche(rend, color_white, arrive);
-                  launched = SDL_FALSE;
-                } else {
-                  cout << "L'unité :" << arrive.contenu.nom << "est morte"
-                       << endl;
-                  arrive.clear_contenu();
-                  affiche(rend, color_red, arrive);
-                  SDL_Delay(200);
-                  affiche(rend, color_white, arrive);
-                }
-              }
-
-            } else {
-              cout << "Cette unité ne peut plus attaquer !" << endl;
-              affiche(rend, color_red, arrive);
-              SDL_Delay(100);
-              print_unit(rend, arrive);
-            }
-          }
-
-        } else {
-          cout << "Cette unité n'appartient pas a votre équipe" << endl;
-          affiche(rend, color_red, arrive);
-          SDL_Delay(100);
-          affiche(rend, color_white, arrive);
-          print_unit(rend, arrive);
-        }
-      } else {
-        affiche(rend, color_red, depart);
-        SDL_Delay(100);
-        print_unit(rend, depart);
-      }
-    } else {
-      cout << "Cette cible est trop loin pour être attaquée !" << endl;
-    }
-  }
 
   bool moove_cell(Cellule &depart, Cellule &arrive) {
+    cout << "moove cell" << endl;
     if (depart.pos.colone - depart.contenu.deplacement <= arrive.pos.colone &&
         depart.pos.colone + depart.contenu.deplacement >= arrive.pos.colone &&
         depart.pos.ligne - depart.contenu.deplacement <= arrive.pos.ligne &&
@@ -409,9 +395,6 @@ public:
         if (plat.tab[i].contenu.equipe == tour_joueur + 1 &&
             plat.tab[i].contenu.jouee == true) {
           plat.tab[i].contenu.jouee = false;
-          if(plat.tab[i].contenu.nom == "chevalier"){
-            plat.tab[i].contenu.nb_attaque++;
-          }
         }
       }
       joueurs[tour_joueur].bois += joueurs[tour_joueur].bonus_bois;
@@ -421,7 +404,8 @@ public:
            << "Joueur " << tour_joueur + 1 << ". Votre tour commence !" << endl;
       affiche_ressources();
     } else {
-      cout << "help : Vous devez double cliquer sur le chateau pour terminer "
+      cout << "help : Vous devez effectuer un clique molette sur le chateau "
+              "pour terminer "
               "votre tour."
            << endl;
     }
