@@ -26,3 +26,4 @@ pouvez produire des <b>chevaliers</b> pour attaquer et des <b>ouvriers</b> pour 
 - <b>Clic droit :</b> Permet de produire un ouvrier quand il est effectué sur le chateau. Permet de déplacer les unités sur les cases ressources et les cases vides. Permet d'attaquer les autre unités lorsque qu'il est effectué depuis un chevalier vers une autre unité<br>
 - <b>Clic mollette :</b> Permet de passer son tour quand il est effectué sur le chateau<br>
 
+ 
