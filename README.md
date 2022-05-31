@@ -6,7 +6,7 @@ pouvez produire des <b>chevaliers</b> pour attaquer et des <b>ouvriers</b> pour 
 - Les Joueurs ont <b>deux ressources</b> différentes à leur disposition. <b>L'or et le bois</b>.<br>
 - Les <b>ouvriers</b> peuvent se déplacer sur les cases <b>pierre</b> et <b>bois</b> pour les transformer en <b>Mines</b> et en <b>Scierie</b> afin de les exploiter et obtenir des ressources à tous les tours.<br>
 -Les <b>chevaliers</b> et les <b>ouvriers</b> coûtent des ressources 50 bois pour les ouvriers et 100 d'or pour les chevalier.<br>
-![This is an image](assets/jeu.png)
+
 <br>
 <h1><u><b>Structure :</b></u></h1>
 - <b>Le projet</b> est scindé en 6 fichier dans l'ordre suivant ```SDL++.cpp > object.cpp > struct.cpp > draw.cpp > game.cpp > main.cpp```<br>
