@@ -6,6 +6,8 @@
 - Les **ouvriers** peuvent se déplacer sur les cases **pierre** et **bois** pour les transformer en **Mines** et en **Scierie** afin de les exploiter et obtenir des ressources à tous les tours.
 -Les **chevaliers** et les **ouvriers** coûtent des ressources 50 bois pour les ouvriers et 100 d'or pour les chevalier.
 
+![Exemple du jeu](/projet/assets/jeu.png)
+
 
 ## Structure du Projet :
 - **Le projet** est scindé en 6 fichier dans l'ordre suivant ```SDL++.cpp > object.cpp > struct.cpp > draw.cpp > game.cpp > main.cpp```
