@@ -8,7 +8,6 @@
 
 ![Exemple du jeu](/projet/assets/jeu.png)
 
-
 ## Structure du Projet :
 - **Le projet** est scindé en 6 fichier dans l'ordre suivant ```SDL++.cpp > object.cpp > struct.cpp > draw.cpp > game.cpp > main.cpp```
 - `SDL++.cpp` : Fichier contenant toutes les fonctions utiles pour certains calculs & redéfinition des fonctions SDL.<br>
